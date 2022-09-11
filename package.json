@@ -1,0 +1,40 @@
+{
+  "name": "SwadeshApp",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "build": "yarn android --variant=release",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@react-native-firebase/app": "^15.4.0",
+    "@react-native-firebase/firestore": "^15.4.0",
+    "@react-native-firebase/storage": "^15.4.0",
+    "@reduxjs/toolkit": "^1.8.5",
+    "react": "17.0.2",
+    "react-native": "0.68.2",
+    "react-native-image-picker": "^4.10.0",
+    "react-native-modal": "^13.0.1",
+    "react-native-paper": "^4.12.4",
+    "react-native-vector-icons": "^9.2.0",
+    "react-redux": "^8.0.2",
+    "redux-saga": "^1.2.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.19.0",
+    "@babel/runtime": "^7.19.0",
+    "@react-native-community/eslint-config": "^3.1.0",
+    "babel-jest": "^29.0.2",
+    "eslint": "^8.23.0",
+    "jest": "^29.0.2",
+    "metro-react-native-babel-preset": "^0.72.2",
+    "react-test-renderer": "17.0.2"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
