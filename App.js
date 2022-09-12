@@ -167,7 +167,9 @@ const App = () => {
           }}
         />
         <View style={{marginLeft: 20}}>
-          <Title>{item._data.name}</Title>
+          <Title style={{fontSize: 20, fontWeight: 'bold'}}>
+            {item._data.name}
+          </Title>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Title
               style={{
@@ -175,7 +177,7 @@ const App = () => {
                 color: 'gray',
                 textDecorationLine: 'line-through',
               }}>
-              {item._data.price}
+              {item._data.price}$
             </Title>
 
             <Title>{item._data.offeredPrice}</Title>
