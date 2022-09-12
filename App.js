@@ -173,26 +173,29 @@ const App = () => {
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Title
               style={{
-                marginRight: 10,
+                marginRight: 6,
                 color: 'gray',
+                fontSize: 16,
                 textDecorationLine: 'line-through',
               }}>
               {item._data.price}$
             </Title>
 
-            <Title>{item._data.offeredPrice}</Title>
+            <Title style={{fontSize: 16, fontWeight: 'bold'}}>
+              {item._data.offeredPrice}$
+            </Title>
           </View>
           <View
             style={{flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
             <TouchableOpacity
               style={styles.buttonContainer}
               onPress={() => handleDelete(item.id)}>
-              <Antdesign name="delete" color="red" size={25} />
+              <Antdesign name="delete" color="red" size={20} />
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.buttonContainer}
               onPress={() => handleEdit(item)}>
-              <Antdesign name="edit" color="blue" size={25} />
+              <Antdesign name="edit" color="blue" size={20} />
             </TouchableOpacity>
           </View>
         </View>
