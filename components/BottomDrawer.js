@@ -85,7 +85,7 @@ const BottomDrawer = ({
           />
           <Button
             mode="contained"
-            color="blue"
+            color="#3ded97"
             style={{marginLeft: 10, borderRadius: 20}}
             onPress={launchGallary}>
             Pick Image
@@ -110,7 +110,7 @@ const BottomDrawer = ({
           </Button>
           <Button
             mode="contained"
-            color="#000"
+            color="#3ded97"
             loading={uploading}
             style={{
               width: '40%',
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
   modalItem: {
     flex: 0.55,
-    backgroundColor: '#f3ead3',
+    backgroundColor: '#fda172',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,

@@ -15,8 +15,18 @@ import {
   StyleSheet,
   Text,
   View,
+  TextComponent,
+  TouchableOpacity,
 } from 'react-native';
-import {Button, Card, Paragraph, TextInput, Title} from 'react-native-paper';
+import {
+  ActivityIndicator,
+  Avatar,
+  Button,
+  Card,
+  Paragraph,
+  TextInput,
+  Title,
+} from 'react-native-paper';
 
 import storage from '@react-native-firebase/storage';
 import {useDispatch, useSelector} from 'react-redux';
@@ -27,6 +37,7 @@ import {
   getProductFetch,
 } from './redux/productSlice';
 import BottomDrawer from './components/BottomDrawer';
+import Antdesign from 'react-native-vector-icons/AntDesign';
 
 const App = () => {
   const [ModalVisible, setModalVisible] = useState(false);
@@ -39,7 +50,7 @@ const App = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [id, setId] = useState('');
 
-  const products = useSelector(s => s.products.products);
+  const {products, isLoading} = useSelector(s => s.products);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -79,31 +90,34 @@ const App = () => {
   };
 
   const handleEditItem = async () => {
-    if (!imageFile) {
-      return Alert.alert('Please Select Image');
-    }
-    const {uri} = imageFile;
-    const filename = uri.substring(uri.lastIndexOf('/') + 1);
-    const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
     setUploading(true);
-    const task = storage().ref(filename).putFile(uploadUri);
+    let downloadUrl = imageUrl;
+    if (!!imageFile) {
+      const {uri} = imageFile;
+      const filename = uri.substring(uri.lastIndexOf('/') + 1);
+      const uploadUri =
+        Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
 
-    try {
-      await task;
-      const downloadUrl = await storage().ref(filename).getDownloadURL();
-      console.log(downloadUrl);
-      dispatch(
-        editProduct({
-          id,
-          name,
-          price,
-          offeredPrice,
-          downloadUrl,
-        }),
-      );
-    } catch (e) {
-      console.error(e);
+      const task = storage().ref(filename).putFile(uploadUri);
+      try {
+        await task;
+        downloadUrl = await storage().ref(filename).getDownloadURL();
+      } catch (e) {
+        return console.error(e);
+      }
     }
+
+    dispatch(
+      editProduct({
+        id,
+        name,
+        price,
+        offeredPrice,
+        downloadUrl,
+      }),
+    );
+    dispatch(getProductFetch());
+
     setUploading(false);
     setModalVisible(false);
     setIsEditing(false);
@@ -111,7 +125,6 @@ const App = () => {
     setPrice('');
     setOfferedPrice('');
     setImageFile(null);
-    dispatch(getProductFetch());
   };
 
   const handleDelete = docId => {
@@ -141,28 +154,48 @@ const App = () => {
   };
 
   const renderItem = ({item}) => (
-    <Card style={styles.item}>
-      <Card.Content>
-        <Title>{item._data.name}</Title>
-      </Card.Content>
-      <Card.Cover source={{uri: item._data.imageUrl}} />
-      <Card.Content style={{flexDirection: 'row'}}>
-        <Title
-          style={{
-            marginRight: 10,
-            color: 'gray',
-            textDecorationLine: 'line-through',
-          }}>
-          {item._data.price}
-        </Title>
+    <View style={styles.item}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}>
+        <Avatar.Image
+          size={130}
+          source={{
+            uri: item._data.imageUrl,
+          }}
+        />
+        <View style={{marginLeft: 20}}>
+          <Title>{item._data.name}</Title>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Title
+              style={{
+                marginRight: 10,
+                color: 'gray',
+                textDecorationLine: 'line-through',
+              }}>
+              {item._data.price}
+            </Title>
 
-        <Title>{item._data.offeredPrice}</Title>
-      </Card.Content>
-      <Card.Actions>
-        <Button onPress={() => handleDelete(item.id)}>Delete</Button>
-        <Button onPress={() => handleEdit(item)}>Edit</Button>
-      </Card.Actions>
-    </Card>
+            <Title>{item._data.offeredPrice}</Title>
+          </View>
+          <View
+            style={{flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
+            <TouchableOpacity
+              style={styles.buttonContainer}
+              onPress={() => handleDelete(item.id)}>
+              <Antdesign name="delete" color="red" size={25} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonContainer}
+              onPress={() => handleEdit(item)}>
+              <Antdesign name="edit" color="blue" size={25} />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </View>
   );
 
   return (
@@ -185,13 +218,34 @@ const App = () => {
         isEditing={isEditing}
         setIsEditing={setIsEditing}
       />
-      <Button onPress={() => setModalVisible(true)}>Add New</Button>
 
-      <FlatList
-        data={products}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-      />
+      <Button
+        mode="contained"
+        color="#3ded97"
+        style={{
+          alignSelf: 'flex-end',
+          marginRight: 20,
+          marginVertical: 8,
+        }}
+        disabled={!isLoading}
+        onPress={() => setModalVisible(true)}>
+        Add New
+      </Button>
+      {!isLoading ? (
+        <ActivityIndicator
+          size={'large'}
+          color="#000000"
+          style={{
+            marginVertical: 300,
+          }}
+        />
+      ) : (
+        <FlatList
+          data={products}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+        />
+      )}
     </SafeAreaView>
   );
 };
@@ -199,14 +253,21 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f3ead3',
+    backgroundColor: '#fda172',
   },
 
   item: {
-    backgroundColor: '#fcfbfc',
+    backgroundColor: '#3ded97',
     marginVertical: 8,
     marginHorizontal: 16,
+    padding: 10,
     borderRadius: 20,
+  },
+  buttonContainer: {
+    backgroundColor: '#ffffff',
+    padding: 5,
+    borderRadius: 20,
+    marginRight: 10,
   },
 
   title: {
